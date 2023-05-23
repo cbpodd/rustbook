@@ -6,6 +6,28 @@ fn main() {
     booleans();
     characters();
     int_overflow();
+    invalid_array_element_access();
+}
+
+fn invalid_array_element_access() {
+    let a = [1, 2, 3, 4, 5];
+
+    println!("Please enter an array index.");
+
+    let mut index = String::new();
+
+    std::io::stdin()
+        .read_line(&mut index)
+        .expect("Failed to read line");
+
+    let index: usize = index
+        .trim()
+        .parse()
+        .expect("Index intered was not a number");
+
+    let element = a[index];
+
+    println!("The value of element at {index} is: {element}");
 }
 
 fn arrays() {
@@ -18,6 +40,9 @@ fn arrays() {
 
     let b: [i32; 5] = [1, 2, 3, 4, 5];
     println!("b: {:?}", b);
+    let second_b = b[2];
+    let fourth_b = b[4];
+    println!("b[2]: {second_b}, b[4]: {fourth_b}");
 
     let c = [0; 23];
     println!("c: {:?}", c);

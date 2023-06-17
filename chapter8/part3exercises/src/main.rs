@@ -1,7 +1,35 @@
-use part3exercises::vec_stats;
+use std::io;
+use part3exercises::{vec_stats, pig_latin};
 
 fn main() {
     test_vec_stats();
+    convert_pig_latin();
+}
+
+fn convert_pig_latin() {
+    let word = get_string_from_user();
+    let pig_latin = pig_latin::to_pig_latin(&word);
+    println!("Your word as pig latin: {pig_latin}");
+}
+
+fn get_string_from_user() -> String {
+    let mut input = String::new();
+
+    println!("Please input a word to be converted into pig latin.");
+
+    io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read word");
+
+    let trimmed = input.trim();
+
+    let words = trimmed.split_whitespace();
+
+    if words.count() != 1 {
+        panic!("User provided more than one word");
+    }
+
+    String::from(trimmed)
 }
 
 fn test_vec_stats() {

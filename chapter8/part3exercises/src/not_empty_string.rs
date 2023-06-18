@@ -3,10 +3,10 @@
 use std::fmt::Display;
 use std::hash::{Hash, Hasher};
 
-use derive_getters::{Getters, Dissolve};
+use derive_getters::Getters;
 
 
-#[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Getters, Dissolve, Clone)]
+#[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Getters, Clone)]
 pub struct NotEmptyString {
     value: String,
 }

@@ -35,6 +35,12 @@ impl Into<String> for NotEmptyString {
     }
 }
 
+impl Into<NotEmptyString> for String {
+    fn into(self) -> NotEmptyString {
+        NotEmptyString::new(self)
+    }
+}
+
 impl Display for NotEmptyString {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
         write!(f, "{}", self.value())

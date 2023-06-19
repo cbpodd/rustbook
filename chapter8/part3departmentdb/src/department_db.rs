@@ -1,16 +1,21 @@
-use crate::{prelude::*, error::{WrongWordError, WrongNumberOfWordsError}};
+use crate::prelude::*;
 
-use std::{collections::HashMap, str::SplitWhitespace};
+use std::{collections::HashMap, str::SplitWhitespace, fmt::{Display, Formatter}};
 
 use derive_getters::{Getters, Dissolve};
 
 use crate::utils::not_empty_string::NotEmptyString;
 
+#[derive(Debug, Default)]
 pub struct DepartmentDb {
     departments: HashMap<NotEmptyString, Vec<NotEmptyString>>,
 }
 
 impl DepartmentDb {
+    pub fn new() -> Self {
+        Self::default()
+    }
+
     // Gets a single department.
     pub fn get_department(&self, dept_name: &NotEmptyString) -> Option<&Vec<NotEmptyString>> {
         self.departments.get(dept_name)
@@ -64,21 +69,43 @@ impl Employee {
     }
 }
 
+impl Display for Employee {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        write!(f, "Employee with name {} in department {}", self.name, self.department)
+    }
+}
+
 pub fn parse_employee_from_input(input: &str) -> Result<Employee> {
     let mut words_in_input = input.split_whitespace();
     const EXPECTED_NUM_WORDS: usize = 4;
 
-    let first_word = words_in_input.next().ok_or(
+    expect_next_word_is(
+        &mut words_in_input,
+        "Add",
+        EXPECTED_NUM_WORDS,
+        0)?;
+
+    let employee_name = words_in_input.next().ok_or(
         Error::WrongNumberOfWords {
             expected_num_words: EXPECTED_NUM_WORDS,
-            actual_num_words: 0 })?;
+            actual_num_words: 1 })?;
 
-    expect_next_word_is(&mut words_in_input, "Add", EXPECTED_NUM_WORDS, 0)?;
-    let employee_name = NotEmptyString::from(next_word_is(&mut words_in_input)?);
-    expect_next_word_is(&mut words_in_input, "to")?;
-    let department = NotEmptyString::from(next_word_is(&mut words_in_input)?);
+    expect_next_word_is(&mut words_in_input, "to", EXPECTED_NUM_WORDS, 2)?;
 
-    Ok(Employee::new(employee_name, department))
+    let department = words_in_input.next().ok_or(
+        Error::WrongNumberOfWords {
+            expected_num_words: EXPECTED_NUM_WORDS,
+            actual_num_words: 3 })?;
+
+    if words_in_input.next().is_some() {
+        return Err(Error::WrongNumberOfWords {
+            expected_num_words: EXPECTED_NUM_WORDS,
+            actual_num_words: 5 });
+    }
+
+    Ok(Employee::new(
+        NotEmptyString::from(employee_name),
+        NotEmptyString::from(department)))
 }
 
 fn expect_next_word_is(

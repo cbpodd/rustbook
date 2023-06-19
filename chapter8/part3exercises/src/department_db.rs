@@ -1,4 +1,5 @@
-use std::{collections::HashMap, error::Error, fmt::Display};
+use core::num;
+use std::{collections::HashMap, error::Error, fmt::Display, str::SplitWhitespace};
 
 use derive_getters::{Getters, Dissolve};
 
@@ -63,11 +64,30 @@ impl Employee {
 }
 
 #[derive(Debug)]
-pub struct InvalidInputError;
+pub enum InvalidInputError {
+    WrongNumberOfWords(WrongNumberOfWordsError),
+    WrongWord,
+    FailedToParseInput,
+}
+
+#[derive(Debug, Copy, Getters, Clone)]
+pub struct WrongNumberOfWordsError {
+    expected_num_words: usize,
+    actual_num_words: usize,
+}
+
+impl WrongNumberOfWordsError {
+    fn new(expected_num_words: usize, actual_num_words: usize) -> Self {
+        Self {
+            expected_num_words,
+            actual_num_words,
+        }
+    }
+}
 
 impl Display for InvalidInputError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Invalid Input Error")
+        write!(f, "Invalid Input Error.")
     }
 }
 
@@ -76,17 +96,25 @@ impl Error for InvalidInputError {}
 pub fn parse_employee_from_input(input: &str) -> Result<Employee, InvalidInputError> {
     let mut words_in_input = input.split_whitespace();
 
-    if words_in_input.clone().count() != 4 {
+    let num_words = words_in_input.clone().count();
+    const EXPECTED_NUM_WORDS: usize = 4;
+
+    if num_words != EXPECTED_NUM_WORDS {
+        return Err(
+            InvalidInputError::WrongNumberOfWords(
+                WrongNumberOfWordsError::new(
+                    EXPECTED_NUM_WORDS,
+                    num_words)));
+    };
+
+    if next_word_is(&words_in_input)? != "Add" {
         return Err(InvalidInputError);
     }
 
-    if words_in_input.next() != Some("Add") {
-        return Err(InvalidInputError);
-    }
+    let employee_name = next_word_is(&words_in_input)?;
 
-    let employee_name = match words_in_input.next() {
-        Some(employee_name) => NotEmptyString::from(employee_name),
-        None => return Err(InvalidInputError),
+    let Some("to") = words_in_input.next() else {
+        return Err(InvalidInputError);
     };
 
     if words_in_input.next() != Some("to") {
@@ -99,4 +127,22 @@ pub fn parse_employee_from_input(input: &str) -> Result<Employee, InvalidInputEr
     };
 
     Ok(Employee::new(employee_name, department))
+}
+
+fn expect_next_word_is(words: &SplitWhitespace, expected: &str) -> Result<(), InvalidInputError> {
+    let next_word = next_word_is(&words)?;
+
+    if next_word != expected {
+        return Err(InvalidInputError::WrongWord);
+    }
+
+    Ok(())
+}
+
+fn next_word_is<'a>(words: &'a SplitWhitespace) -> Result<&'a str, InvalidInputError> {
+    let Some(expected_result) = words.next() else {
+        return Err(InvalidInputError::FailedToParseInput);
+    };
+
+    Ok(expected_result)
 }

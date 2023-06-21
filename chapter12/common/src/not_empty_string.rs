@@ -5,7 +5,6 @@ use std::hash::{Hash, Hasher};
 
 use derive_getters::Getters;
 
-
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Getters, Clone)]
 pub struct NotEmptyString {
     value: String,
@@ -17,27 +16,25 @@ impl NotEmptyString {
             panic!("NotEmptyString must not contain an empty or whitespace-only string.");
         }
 
-        Self {
-            value: raw_string,
-        }
+        Self { value: raw_string }
     }
 }
 
 impl From<&str> for NotEmptyString {
     fn from(raw_string: &str) -> Self {
-        Self::new(String::from(raw_string))
+        Self::from(String::from(raw_string))
     }
 }
 
-impl Into<String> for NotEmptyString {
-    fn into(self) -> String {
-        self.value
+impl From<String> for NotEmptyString {
+    fn from(raw_string: String) -> Self {
+        Self::new(raw_string)
     }
 }
 
-impl Into<NotEmptyString> for String {
-    fn into(self) -> NotEmptyString {
-        NotEmptyString::new(self)
+impl From<NotEmptyString> for String {
+    fn from(not_empty_string: NotEmptyString) -> Self {
+        not_empty_string.value
     }
 }
 

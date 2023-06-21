@@ -1,0 +1,9 @@
+deny = [
+    "unsafe_code",
+]
+
+warn = [
+  "clippy::empty_structs_with_brackets",
+  "clippy::cast_possible_truncation",
+  "missing_docs",
+]

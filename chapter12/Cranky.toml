@@ -5,5 +5,6 @@ deny = [
 warn = [
   "clippy::empty_structs_with_brackets",
   "clippy::cast_possible_truncation",
-  "missing_docs",
+  "explicit_outlives_requirements",
+  "missing_docs"
 ]

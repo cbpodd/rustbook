@@ -2,6 +2,13 @@
 name = "minigrep"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "A minigrep tool for searching files."
+authors = ["Cameron Podd <cbpodd@gmail.com>"]
+keywords = ["grep", "filesystem"]
+readme = "None"
+repository = "https://github.com/cbpodd/rustbook"
+categories = ["learning-tools::example-test-code"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

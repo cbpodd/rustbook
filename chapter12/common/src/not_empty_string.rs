@@ -1,4 +1,7 @@
-// not_empty_string.rs
+//! # Not Empty String
+//!
+//! This module contains the `NotEmptyString` struct, a read-only
+//! string that will not be empty or whitespace.
 
 use std::fmt::Display;
 use std::hash::{Hash, Hasher};

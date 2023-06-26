@@ -2,6 +2,14 @@
 name = "tests_common"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "Common test utilities."
+authors = ["Cameron Podd <cbpodd@gmail.com>"]
+keywords = ["common", "utilities", "test", "unittest"]
+readme = "None"
+repository = "https://github.com/cbpodd/rustbook"
+categories = ["learning-tools::example-test-code"]
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

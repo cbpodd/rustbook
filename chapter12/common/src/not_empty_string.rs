@@ -6,7 +6,7 @@
 use std::fmt::Display;
 use std::hash::{Hash, Hasher};
 
-use derive_getters::Getters;
+use derive_getters::{Dissolve, Getters};
 
 /// A struct containing a read-only string that will not be empty.
 /// Constructing this string in any way with an empty or whitespace
@@ -34,7 +34,7 @@ use derive_getters::Getters;
 ///
 /// not_empty_string.value().push_str("Cannot push!");
 /// ```
-#[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Getters, Clone)]
+#[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Getters, Clone, Dissolve)]
 pub struct NotEmptyString {
     value: String,
 }

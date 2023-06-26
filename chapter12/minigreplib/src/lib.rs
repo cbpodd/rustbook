@@ -1,4 +1,6 @@
-// lib.rs
+//! # Minigreplib
+//!
+//! A minigrep program. Library for the `minigrep` CLI app.
 
 pub mod error;
 

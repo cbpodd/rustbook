@@ -44,6 +44,7 @@ warn = [
   "clippy::empty_structs_with_brackets",
   "clippy::cast_possible_truncation",
   "clippy::bool_to_int_with_if",
+  "clippy::cargo-common-metadata",
   "clippy::cast_lossless",
   "clippy::dbg_macro",
   "clippy::default_trait_access",

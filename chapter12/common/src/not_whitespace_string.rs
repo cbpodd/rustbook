@@ -5,6 +5,7 @@
 
 use std::fmt::Display;
 use std::hash::{Hash, Hasher};
+use std::ops::Deref;
 
 use serde::{Deserialize, Serialize};
 
@@ -169,6 +170,14 @@ impl Display for NotWhitespaceString {
 impl Hash for NotWhitespaceString {
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.get().hash(state);
+    }
+}
+
+impl Deref for NotWhitespaceString {
+    type Target = str;
+
+    fn deref(&self) -> &Self::Target {
+        self.get()
     }
 }
 

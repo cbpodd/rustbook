@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 /// ```
 /// # use common::not_whitespace_string::NotWhitespaceString;
 /// let not_whitespace_string = NotWhitespaceString::try_from("Not Whitespace String")
-///     .expect("Construction shoudl succeed");
+///     .expect("Construction should succeed");
 /// ```
 ///
 /// `NotWhitespaceString`s will error if created from an whitespace string.
@@ -176,8 +176,9 @@ impl Hash for NotWhitespaceString {
 impl Deref for NotWhitespaceString {
     type Target = str;
 
+    #[allow(clippy::explicit_deref_methods)]
     fn deref(&self) -> &Self::Target {
-        self.get()
+        self.0.deref()
     }
 }
 

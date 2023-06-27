@@ -17,21 +17,21 @@ use serde::{Deserialize, Serialize};
 /// are not whitespace.
 /// ```
 /// # use common::not_whitespace_string::NotWhitespaceString;
-/// let not_whitespace_string = NotWhitespaceString::try_from("Not Whitespace String")
+/// let not_whitespace_string = NotWhitespaceString::try_from("Not Whitespace String".to_owned())
 ///     .expect("Construction should succeed");
 /// ```
 ///
 /// `NotWhitespaceString`s will error if created from an whitespace string.
 /// ```
 /// # use common::not_whitespace_string::NotWhitespaceString;
-/// let not_whitespace_string = NotWhitespaceString::try_from("")
+/// let not_whitespace_string = NotWhitespaceString::try_from("".to_owned())
 ///     .expect_err("Construction should error");
 /// ```
 ///
 /// The value in a `NotWhitespaceString` cannot be modified.
 /// ```compile_fail
 /// # use common::not_whitespace_string::NotWhitespaceString;
-/// let not_whitespace_string = NotWhitespaceString::new(String::from("Not Whitespace String"))
+/// let not_whitespace_string = NotWhitespaceString::try_from("Not Whitespace String".to_owned())
 ///     .expect("Construction should succeed");
 ///
 /// not_whitespace_string.value().push_str("Cannot push!");
@@ -76,64 +76,6 @@ impl NotWhitespaceString {
 
         Ok(Self(raw_string))
     }
-
-    /// Get a reference to the inner string.
-    ///
-    /// # Examples
-    ///
-    /// This function gets a reference to the inner string.
-    /// ```
-    /// # use common::not_whitespace_string::NotWhitespaceString;
-    /// let input_str = "Not Whitespace String";
-    /// let not_whitespace_string = NotWhitespaceString::new(String::from(input_str))
-    ///     .expect("String should pass construction.");
-    ///
-    /// assert_eq!(input_str, not_whitespace_string.get());
-    /// ```
-    ///
-    /// The reference is not mutable.
-    /// ```compile_fail
-    /// # use common::not_whitespace_string::NotWhitespaceString;
-    /// let input_str = "Not Whitespace String";
-    /// let not_whitespace_string = NotWhitespaceString::new(String::from(input_str))
-    ///     .expect("String should pass construction.");
-    ///
-    /// not_whitespace_string.get().push_str("Another string");
-    /// ```
-    pub fn get(&self) -> &str {
-        &self.0
-    }
-
-    /// Consume this `NotWhitespaceString`, returning the wrapped string.
-    ///
-    /// # Examples
-    ///
-    /// This function takes ownership of the inner string.
-    /// ```
-    /// # use common::not_whitespace_string::NotWhitespaceString;
-    /// let input_string = String::from("Not Whitespace String");
-    /// let not_whitespace_string = NotWhitespaceString::new(input_string.clone())
-    ///     .expect("String should pass construction.");
-    ///
-    /// let output_string = not_whitespace_string.into_inner();
-    ///
-    /// assert_eq!(input_string, output_string);
-    /// ```
-    ///
-    /// This function consumes the `NotWhitespaceString`.
-    /// ```compile_fail
-    /// # use common::not_whitespace_string::NotWhitespaceString;
-    /// let input_string = String::from("Not Whitespace String");
-    /// let not_whitespace_string = NotWhitespaceString::new(input_string.clone())
-    ///     .expect("String should pass construction.");
-    ///
-    /// let output_string = not_whitespace_string.into_inner();
-    ///
-    /// not_whitespace_string.get(); // This will not compile, as into_inner() consumes the string.
-    /// ```
-    pub fn into_inner(self) -> String {
-        self.0
-    }
 }
 
 impl TryFrom<String> for NotWhitespaceString {
@@ -141,17 +83,6 @@ impl TryFrom<String> for NotWhitespaceString {
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         NotWhitespaceString::new(value)
-    }
-}
-
-impl<'a> TryFrom<&'a str> for NotWhitespaceString {
-    type Error = &'a str;
-
-    fn try_from(value: &'a str) -> Result<Self, Self::Error> {
-        match NotWhitespaceString::try_from(value.to_owned()) {
-            Ok(nws) => Ok(nws),
-            Err(_) => Err(value),
-        }
     }
 }
 
@@ -163,22 +94,22 @@ impl From<NotWhitespaceString> for String {
 
 impl Display for NotWhitespaceString {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        self.get().fmt(f)
+        self.0.fmt(f)
     }
 }
 
 impl Hash for NotWhitespaceString {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.get().hash(state);
+        self.0.hash(state);
     }
 }
 
 impl Deref for NotWhitespaceString {
-    type Target = str;
+    type Target = String;
 
     #[allow(clippy::explicit_deref_methods)]
     fn deref(&self) -> &Self::Target {
-        self.0.deref()
+        &self.0
     }
 }
 
@@ -204,10 +135,10 @@ mod unit_tests {
     #[test]
     fn can_be_created_from_nonwhitespace_string() {
         let underlying_string = "An underlying string";
-        let nes = NotWhitespaceString::new(String::from(underlying_string))
+        let nws = NotWhitespaceString::new(String::from(underlying_string))
             .expect("String construction should not fail");
 
-        assert_eq!(underlying_string, nes.get());
+        assert_eq!(underlying_string, *nws);
     }
 
     #[test]
@@ -222,7 +153,7 @@ mod unit_tests {
     fn returns_err_with_whitespace_string() {
         let whitespace_string = String::from(" \t \n ");
         let err_string = NotWhitespaceString::new(whitespace_string.clone())
-            .expect_err("Expet construction to error");
+            .expect_err("Expect construction to error");
 
         assert_eq!(whitespace_string, err_string);
     }
@@ -235,7 +166,7 @@ mod unit_tests {
         let deserialized_struct: TestStruct =
             serde_json::from_str(&json_str).expect("Deserialization should not fail");
 
-        assert_eq!(test_str, deserialized_struct.nws.get());
+        assert_eq!(test_str, *deserialized_struct.nws);
     }
 
     #[test]
@@ -262,7 +193,8 @@ mod unit_tests {
         let expected_json_str = format!("{{\"nws\":\"{test_str}\"}}");
 
         let test_struct = TestStruct {
-            nws: NotWhitespaceString::try_from(test_str).expect("Construction should not fail"),
+            nws: NotWhitespaceString::try_from(test_str.to_owned())
+                .expect("Construction should not fail"),
         };
 
         let actual_json_str =

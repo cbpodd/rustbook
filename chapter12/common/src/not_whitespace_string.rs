@@ -37,9 +37,11 @@ use serde::{Deserialize, Serialize};
 /// not_whitespace_string.value().push_str("Cannot push!");
 /// ```
 #[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Clone, Deserialize, Serialize)]
+// TODO: Perhaps Eq, PartialEq, PartialOrd, Ord, Clone, Move, Debug can all be conditionally compiled in macro?
 #[serde(try_from = "String")]
 #[serde(into = "String")]
 pub struct NotWhitespaceString(String);
+// TODO: Try to make this a macro over trait Accept<String> for NotWhitespaceString
 
 impl NotWhitespaceString {
     /// Construct a new `NotWhitespaceString` from another string.

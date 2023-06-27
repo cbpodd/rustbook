@@ -6,6 +6,8 @@
 use std::fmt::{Debug, Display};
 use std::hash::Hash;
 
+use serde::{Deserialize, Serialize};
+
 /// Generic test ensures that a struct
 /// implements the required functions to be thread-safe.
 /// This test doesn't actually have to run to verify,
@@ -44,3 +46,12 @@ pub fn is_hashable<T: Hash>() {}
 /// This test doesn't actually have to run to verify,
 /// compiling is enough.
 pub fn is_displayable<T: Display + Debug>() {}
+
+/// Generic test ensuring that a type can be serialized and deserialized with serde 1.0.
+/// This test doesn't actually have to run to verify,
+/// compiling is enough.
+pub fn is_serializable<'de, T>()
+where
+    T: Serialize + Deserialize<'de>,
+{
+}

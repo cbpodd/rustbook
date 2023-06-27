@@ -188,6 +188,7 @@ mod unit_tests {
         implements_behaviors::is_clonable::<NotWhitespaceString>();
         implements_behaviors::is_hashable::<NotWhitespaceString>();
         implements_behaviors::is_displayable::<NotWhitespaceString>();
+        implements_behaviors::is_serializable::<NotWhitespaceString>();
     }
 
     #[test]

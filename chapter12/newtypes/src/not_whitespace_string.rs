@@ -37,10 +37,11 @@ use wrapper::Wrapper;
 ///
 /// not_whitespace_string.value().push_str("Cannot push!");
 /// ```
-#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Clone, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[cfg_attr(feature = "serde", serde(into = "String"))]
+#[derive(Debug)]
 pub struct NotWhitespaceString(String);
 
 /// Error type for `NotWhitespaceString`.

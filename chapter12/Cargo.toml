@@ -1,8 +1,10 @@
 [workspace]
 
 members = [
+    "input_validator",
     "minigrep",
     "minigreplib",
     "newtypes",
+    "not_empty_string",
     "tests_common"
 ]

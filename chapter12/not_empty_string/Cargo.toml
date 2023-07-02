@@ -1,0 +1,20 @@
+[package]
+name = "not_empty_string"
+version = "0.1.0"
+edition = "2021"
+description = "A test newtype."
+authors = ["Cameron Podd <cbpodd@gmail.com>"]
+keywords = ["newtype", "wrapper", "string"]
+readme = "None"
+repository = "https://github.com/cbpodd/rustbook"
+categories = ["learning-tools::example-test-code"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+derive_more = "0.99"
+input_validator = { path = "../input_validator" }
+serde = { version = "1.0", features = ["derive"], optional = true }
+
+[features]
+serde = ["dep:serde"]

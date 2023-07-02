@@ -7,7 +7,9 @@ use std::fmt::Display;
 use std::hash::{Hash, Hasher};
 use std::ops::Deref;
 
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+use wrapper::Wrapper;
 
 /// A struct containing a read-only string that will not be whitespace.
 ///
@@ -16,32 +18,37 @@ use serde::{Deserialize, Serialize};
 /// `NotWhitespaceString`s can be created from other strings to ensure they
 /// are not whitespace.
 /// ```
-/// # use common::not_whitespace_string::NotWhitespaceString;
+/// # use newtypes::not_whitespace_string::NotWhitespaceString;
 /// let not_whitespace_string = NotWhitespaceString::try_from("Not Whitespace String".to_owned())
 ///     .expect("Construction should succeed");
 /// ```
 ///
 /// `NotWhitespaceString`s will error if created from an whitespace string.
 /// ```
-/// # use common::not_whitespace_string::NotWhitespaceString;
-/// let not_whitespace_string = NotWhitespaceString::try_from("".to_owned())
-///     .expect_err("Construction should error");
+/// # use newtypes::not_whitespace_string::NotWhitespaceString;
+/// assert!(NotWhitespaceString::try_from("".to_owned()).is_err());
 /// ```
 ///
 /// The value in a `NotWhitespaceString` cannot be modified.
 /// ```compile_fail
-/// # use common::not_whitespace_string::NotWhitespaceString;
+/// # use newtypes::not_whitespace_string::NotWhitespaceString;
 /// let not_whitespace_string = NotWhitespaceString::try_from("Not Whitespace String".to_owned())
 ///     .expect("Construction should succeed");
 ///
 /// not_whitespace_string.value().push_str("Cannot push!");
 /// ```
-#[derive(Debug, Eq, PartialEq, PartialOrd, Ord, Clone, Deserialize, Serialize)]
-// TODO: Perhaps Eq, PartialEq, PartialOrd, Ord, Clone, Copy, Debug, Deserialize, Serialize can all be conditionally compiled in macro?
-#[serde(try_from = "String")]
-#[serde(into = "String")]
+#[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd)]
+#[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
+#[cfg_attr(feature = "serde", serde(try_from = "String"))]
+#[cfg_attr(feature = "serde", serde(into = "String"))]
 pub struct NotWhitespaceString(String);
-// TODO: Try to make this a macro over trait Accept<String> for NotWhitespaceString
+
+/// Error type for `NotWhitespaceString`.
+/// Thrown in construction if an empty or whitespace
+/// string is used.
+#[derive(thiserror::Error, Debug)]
+#[error("Input is empty or whitespace")]
+pub struct Error(String);
 
 impl NotWhitespaceString {
     /// Construct a new `NotWhitespaceString` from another string.
@@ -56,7 +63,7 @@ impl NotWhitespaceString {
     /// `NotWhitespaceString`s can be created from other strings to ensure they
     /// are not whitespace.
     /// ```
-    /// # use common::not_whitespace_string::NotWhitespaceString;
+    /// # use newtypes::not_whitespace_string::NotWhitespaceString;
     /// let not_whitespace_string = NotWhitespaceString::new(String::from("Not Whitespace String"))
     ///     .expect("String should pass construction.");
     /// ```
@@ -64,16 +71,13 @@ impl NotWhitespaceString {
     /// `NotWhitespaceString`s will fail if created from an whitespace string,
     /// returning the original string as the error.
     /// ```
-    /// # use common::not_whitespace_string::NotWhitespaceString;
+    /// # use newtypes::not_whitespace_string::NotWhitespaceString;
     ///
-    /// let err_string = NotWhitespaceString::new(String::new())
-    ///     .expect_err("String should fail construction.");
-    ///
-    /// assert_eq!(String::new(), err_string);
+    /// assert!(NotWhitespaceString::new(String::new()).is_err());
     /// ```
-    pub fn new(raw_string: String) -> Result<Self, String> {
+    pub fn new(raw_string: String) -> Result<Self, Error> {
         if raw_string.trim().is_empty() {
-            return Err(raw_string);
+            return Err(Error(raw_string));
         }
 
         Ok(Self(raw_string))
@@ -81,7 +85,7 @@ impl NotWhitespaceString {
 }
 
 impl TryFrom<String> for NotWhitespaceString {
-    type Error = String;
+    type Error = Error;
 
     fn try_from(value: String) -> Result<Self, Self::Error> {
         NotWhitespaceString::new(value)
@@ -115,10 +119,17 @@ impl Deref for NotWhitespaceString {
     }
 }
 
+impl Wrapper<String> for NotWhitespaceString {
+    fn into_inner(self) -> String {
+        self.0
+    }
+}
+
 #[cfg(test)]
 mod unit_tests {
     use super::NotWhitespaceString;
 
+    #[cfg(feature = "serde")]
     use serde::{Deserialize, Serialize};
     use tests_common::implements_behaviors;
 
@@ -131,6 +142,11 @@ mod unit_tests {
         implements_behaviors::is_clonable::<NotWhitespaceString>();
         implements_behaviors::is_hashable::<NotWhitespaceString>();
         implements_behaviors::is_displayable::<NotWhitespaceString>();
+    }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn not_whitespace_string_implements_serde_behaviors() {
         implements_behaviors::is_serializable::<NotWhitespaceString>();
     }
 
@@ -145,21 +161,15 @@ mod unit_tests {
 
     #[test]
     fn returns_err_with_empty_string() {
-        let err_string =
-            NotWhitespaceString::new(String::new()).expect_err("Expect construction to error");
-
-        assert_eq!(String::new(), err_string);
+        assert!(NotWhitespaceString::new(String::new()).is_err());
     }
 
     #[test]
     fn returns_err_with_whitespace_string() {
-        let whitespace_string = String::from(" \t \n ");
-        let err_string = NotWhitespaceString::new(whitespace_string.clone())
-            .expect_err("Expect construction to error");
-
-        assert_eq!(whitespace_string, err_string);
+        assert!(NotWhitespaceString::new(" \t \n ".to_owned()).is_err());
     }
 
+    #[cfg(feature = "serde")]
     #[test]
     fn deserializes_from_json_string() {
         let test_str = "Not Whitespace String";
@@ -171,24 +181,16 @@ mod unit_tests {
         assert_eq!(test_str, *deserialized_struct.nws);
     }
 
+    #[cfg(feature = "serde")]
     #[test]
     fn deserialization_fails_if_string_is_whitespace() {
         let test_str = "  ";
         let json_str = format!("{{\"nws\":\"{test_str}\"}}");
 
-        let err =
-            serde_json::from_str::<TestStruct>(&json_str).expect_err("Deserialization should fail");
-
-        #[allow(clippy::string_slice)]
-        let err_string = err.to_string();
-
-        let test_str_subsection = err_string
-            .get(..test_str.len())
-            .expect("Slicing off extra error end for testing");
-
-        assert_eq!(test_str, test_str_subsection);
+        assert!(serde_json::from_str::<TestStruct>(&json_str).is_err());
     }
 
+    #[cfg(feature = "serde")]
     #[test]
     fn serializes_to_json_string() {
         let test_str = "Not Whitespace String";
@@ -205,6 +207,7 @@ mod unit_tests {
         assert_eq!(expected_json_str, actual_json_str);
     }
 
+    #[cfg(feature = "serde")]
     #[derive(Deserialize, Serialize, Debug)]
     struct TestStruct {
         nws: NotWhitespaceString,

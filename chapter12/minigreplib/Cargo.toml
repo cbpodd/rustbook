@@ -10,8 +10,6 @@ readme = "None"
 repository = "https://github.com/cbpodd/rustbook"
 categories = ["learning-tools::example-test-code"]
 
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+newtypes = { path = "../newtypes" }
 thiserror = "1.0"

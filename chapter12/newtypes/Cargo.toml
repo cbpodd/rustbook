@@ -1,20 +1,23 @@
 [package]
-name = "common"
+name = "newtypes"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-description = "A collection of common utilities"
+description = "A collection of commmon newtypes for reuse."
 authors = ["Cameron Podd <cbpodd@gmail.com>"]
-keywords = ["common", "utitlities"]
+keywords = ["newtype", "wrapper"]
 readme = "None"
 repository = "https://github.com/cbpodd/rustbook"
 categories = ["learning-tools::example-test-code"]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
-serde = { version = "1.0", features = ["derive"] }
+serde = { version = "1.0", features = ["derive"], optional = true }
+thiserror = "1.0"
+wrapper = "0.1"
 
 [dev-dependencies]
 tests_common = { path = "../tests_common" }
 serde_json = "1.0"
+
+[features]
+serde = ["dep:serde"]

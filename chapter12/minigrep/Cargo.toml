@@ -14,3 +14,5 @@ categories = ["learning-tools::example-test-code"]
 
 [dependencies]
 minigreplib = { path = "../minigreplib" }
+newtypes = { path = "../newtypes" }
+thiserror = "1.0"

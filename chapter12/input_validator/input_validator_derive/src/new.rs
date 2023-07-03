@@ -4,9 +4,9 @@
 //! sanitized newtypes.
 
 use crate::utils;
-use proc_macro::{Ident, Span, TokenStream};
+use proc_macro::TokenStream;
 use quote::quote;
-use syn::{DeriveInput, LitStr};
+use syn::DeriveInput;
 
 pub(crate) fn implement_validated(ast: &DeriveInput) -> TokenStream {
     let (name, wrapped) = utils::get_struct_info(ast);
@@ -85,27 +85,6 @@ pub(crate) fn implement_sanitized_validated(ast: &DeriveInput) -> TokenStream {
                 Ok(#name(sanitized_input))
             }
         }
-    };
-
-    generated.into()
-}
-
-pub(crate) fn implement_thiserror_wrapper(ast: &DeriveInput) -> TokenStream {
-    let (name, wrapped) = utils::get_struct_info(ast);
-
-    let attribute_error_name =
-        utils::get_attribute_value(&ast.attrs, "error_name");
-    let error_name = attribute_error_name
-        .map_or("Error".to_owned(), |lit_str: LitStr| lit_str.value());
-
-    let error_identifier =
-        proc_macro2::Ident::new(&error_name, proc_macro2::Span::call_site());
-
-    let generated = quote! {
-        /// Error indicating the wrapper struct failed validation.
-        #[derive(Debug, thiserror::Error)]
-        #[error("Input for {} failed validation. Input: {0}", stringify!(#name))]
-        pub struct #error_identifier(pub #wrapped);
     };
 
     generated.into()

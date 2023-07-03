@@ -2,6 +2,7 @@
 name = "input_validator"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 description = "An input validator."
 authors = ["Cameron Podd <cbpodd@gmail.com>"]
 keywords = ["newtype", "wrapper", "string"]

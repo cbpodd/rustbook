@@ -2,6 +2,7 @@
 name = "not_empty_string"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 description = "A test newtype."
 authors = ["Cameron Podd <cbpodd@gmail.com>"]
 keywords = ["newtype", "wrapper", "string"]

@@ -2,6 +2,7 @@
 name = "input_validator_derive"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
 description = "Derivable macros for input validator traits."
 authors = ["Cameron Podd <cbpodd@gmail.com>"]
 keywords = ["newtype", "wrapper", "derive", "macros"]

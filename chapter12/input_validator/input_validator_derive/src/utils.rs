@@ -3,6 +3,12 @@
 use proc_macro::TokenStream;
 use syn::{DeriveInput, Ident, Type};
 
+pub(crate) fn get_struct_info(ast: &DeriveInput) -> (&Ident, &Type) {
+    let name = get_name(ast);
+    let wrapped_type = get_single_wrapped_field(ast);
+    (name, wrapped_type)
+}
+
 pub(crate) fn get_name(ast: &DeriveInput) -> &Ident {
     &ast.ident
 }

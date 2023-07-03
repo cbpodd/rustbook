@@ -3,6 +3,8 @@
 //! Derivable implementations of constructor functions for validated and/or
 //! sanitized newtypes.
 
+extern crate thiserror;
+
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::DeriveInput;
@@ -58,6 +60,18 @@ pub(crate) fn implement_sanitized_validated(ast: &DeriveInput) -> TokenStream {
                 Ok(#name(sanitized_input))
             }
         }
+    };
+
+    generated.into()
+}
+
+pub(crate) fn implement_error(ast: &DeriveInput) -> TokenStream {
+    let (name, wrapped) = crate::utils::get_struct_info(ast);
+    let generated = quote! {
+        /// Error indicating the wrapper struct failed validation.
+        #[derive(Debug, thiserror::Error)]
+        #[error("Input for {} failed validation. Input: {0}", stringify!(#name))]
+        pub struct Error(#wrapped);
     };
 
     generated.into()

@@ -46,3 +46,10 @@ pub fn new_validated_tryfrom(input: TokenStream) -> TokenStream {
     let ast = utils::parse_ast(input);
     from::implement_tryfrom(&ast)
 }
+
+/// Derive an `Error` struct for the specified newtype struct.
+#[proc_macro_derive(Error)]
+pub fn error_struct(input: TokenStream) -> TokenStream {
+    let ast = utils::parse_ast(input);
+    new::implement_error(&ast)
+}

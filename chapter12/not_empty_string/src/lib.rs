@@ -4,7 +4,7 @@
 
 use derive_more::{AsRef, Deref, Display, From, Into};
 use input_validator::{
-    InputSanitizer, InputValidator, IntoInner, NewSanitized,
+    Error, InputSanitizer, InputValidator, IntoInner, NewSanitized,
     NewSanitizedValidated, NewValidated, TryFrom,
 };
 
@@ -17,6 +17,9 @@ pub fn test() {
     let nws = NotWhitespaceString::try_from("test".to_owned())
         .expect("Construction should not fail");
     printer(&nws);
+
+    let err = Error("test".to_owned());
+    println!("{err}");
 
     let inner = nws.into_inner();
     printer(&inner);
@@ -48,10 +51,13 @@ pub fn test() {
     IntoInner,
     NewValidated,
     TryFrom,
+    Error,
 )]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[cfg_attr(feature = "serde", serde(into = "String"))]
+// #[validationErrorType(Error)]
+// #[inputvalidationErrorName(StringWhitespaceError)]
 pub struct NotWhitespaceString(String);
 
 impl InputValidator for NotWhitespaceString {

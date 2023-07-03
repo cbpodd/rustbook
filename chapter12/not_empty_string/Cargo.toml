@@ -16,6 +16,7 @@ categories = ["learning-tools::example-test-code"]
 derive_more = "0.99"
 input_validator = { path = "../input_validator", features = ["derive"] }
 serde = { version = "1.0", features = ["derive"], optional = true }
+thiserror = "1.0"
 
 [features]
 serde = ["dep:serde"]

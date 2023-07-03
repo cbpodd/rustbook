@@ -14,5 +14,6 @@ categories = ["learning-tools::example-test-code"]
 proc_macro = true
 
 [dependencies]
-syn = "1.0"
 quote = "1.0"
+syn = "1.0"
+thiserror = "1.0"

@@ -4,8 +4,10 @@ use proc_macro::TokenStream;
 use quote::quote;
 use syn::DeriveInput;
 
+use crate::utils;
+
 pub(crate) fn implement(ast: &DeriveInput) -> TokenStream {
-    let (name, wrapped) = crate::utils::get_struct_info(ast);
+    let (name, wrapped) = utils::get_struct_info(ast);
     let generated = quote! {
         impl IntoInner for #name {
             type Inner = #wrapped;

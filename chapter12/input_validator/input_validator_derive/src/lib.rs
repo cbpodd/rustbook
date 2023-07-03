@@ -20,7 +20,7 @@ pub fn into_inner_derive(input: TokenStream) -> TokenStream {
 }
 
 /// Derive the `NewValidated`trait on the specified wrapper struct.
-#[proc_macro_derive(NewValidated)]
+#[proc_macro_derive(NewValidated, attributes(error_type))]
 pub fn new_validated_derive(input: TokenStream) -> TokenStream {
     let ast = utils::parse_ast(input);
     new::implement_validated(&ast)
@@ -34,22 +34,22 @@ pub fn new_sanitized_derive(input: TokenStream) -> TokenStream {
 }
 
 /// Derive the `NewSanitizedValidated`trait on the specified wrapper struct.
-#[proc_macro_derive(NewSanitizedValidated)]
+#[proc_macro_derive(NewSanitizedValidated, attributes(error_type))]
 pub fn new_sanitized_validated_derive(input: TokenStream) -> TokenStream {
     let ast = utils::parse_ast(input);
     new::implement_sanitized_validated(&ast)
 }
 
 /// Derive the `NewValidated`trait on the specified wrapper struct.
-#[proc_macro_derive(TryFrom)]
+#[proc_macro_derive(TryFrom, attributes(error_type))]
 pub fn new_validated_tryfrom(input: TokenStream) -> TokenStream {
     let ast = utils::parse_ast(input);
     from::implement_tryfrom(&ast)
 }
 
-/// Derive an `Error` struct for the specified newtype struct.
-#[proc_macro_derive(Error)]
-pub fn error_struct(input: TokenStream) -> TokenStream {
+/// Derive an error struct using `thiserror::Error`
+#[proc_macro_derive(ThisError, attributes(error_name))]
+pub fn thiserror_struct_define(input: TokenStream) -> TokenStream {
     let ast = utils::parse_ast(input);
-    new::implement_error(&ast)
+    new::implement_thiserror_wrapper(&ast)
 }

@@ -5,7 +5,7 @@
 use derive_more::{AsRef, Deref, Display, From, Into};
 use input_validator::{
     InputSanitizer, InputValidator, IntoInner, NewSanitized,
-    NewSanitizedValidated, NewValidated, TryFrom,
+    NewSanitizedValidated, NewValidated, ThisError, TryFrom,
 };
 
 fn printer(test: &str) {
@@ -38,6 +38,9 @@ pub fn test() {
 
     let inner = tnes.into_inner();
     printer(&inner);
+
+    let err = NotWhitespaceStringError("string".to_owned());
+    printer(&err.0);
 }
 
 /// Not whitespace string
@@ -56,17 +59,14 @@ pub fn test() {
     IntoInner,
     NewValidated,
     TryFrom,
+    ThisError,
 )]
+#[error_name("NotWhitespaceStringError")]
 #[error_type(NotWhitespaceStringError)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[cfg_attr(feature = "serde", serde(into = "String"))]
 pub struct NotWhitespaceString(String);
-
-/// Error indicating the wrapper struct failed validation.
-#[derive(Debug, thiserror::Error)]
-#[error("Input for NotWhitespaceString failed validation. Input: {0}")]
-pub struct NotWhitespaceStringError(pub String);
 
 impl NotWhitespaceStringError {
     pub(crate) fn nwserrtest(&self) {

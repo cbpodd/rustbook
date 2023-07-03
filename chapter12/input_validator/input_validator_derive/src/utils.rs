@@ -3,7 +3,7 @@
 //! Utilities for the input validator deriving functions.
 
 use proc_macro::TokenStream;
-use syn::{DeriveInput, Ident, Type};
+use syn::{Attribute, DeriveInput, Ident, Type};
 
 pub(crate) fn parse_ast(input: TokenStream) -> DeriveInput {
     // Construct a representation of Rust code as a syntax tree
@@ -15,6 +15,19 @@ pub(crate) fn get_struct_info(ast: &DeriveInput) -> (&Ident, &Type) {
     let name = get_name(ast);
     let wrapped_type = get_single_wrapped_field(ast);
     (name, wrapped_type)
+}
+
+pub(crate) fn get_attribute_value<AttributeType>(
+    attrs: &[Attribute],
+    name: &str,
+) -> Option<AttributeType>
+where
+    AttributeType: syn::parse::Parse,
+{
+    attrs
+        .iter()
+        .find(|a| a.path.is_ident(name))
+        .and_then(|attr| attr.parse_args::<AttributeType>().ok())
 }
 
 fn get_name(ast: &DeriveInput) -> &Ident {

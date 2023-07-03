@@ -4,7 +4,7 @@
 
 use derive_more::{AsRef, Deref, Display, From, Into};
 use input_validator::{
-    Error, InputSanitizer, InputValidator, IntoInner, NewSanitized,
+    InputSanitizer, InputValidator, IntoInner, NewSanitized,
     NewSanitizedValidated, NewValidated, TryFrom,
 };
 
@@ -14,11 +14,16 @@ fn printer(test: &str) {
 
 /// A test function
 pub fn test() {
+    let nwserr =
+        NotWhitespaceString::new(String::new()).expect_err("Will error");
+    println!("{nwserr}");
+    nwserr.nwserrtest();
+
     let nws = NotWhitespaceString::try_from("test".to_owned())
         .expect("Construction should not fail");
     printer(&nws);
 
-    let err = Error("test".to_owned());
+    let err = NotWhitespaceStringError("test".to_owned());
     println!("{err}");
 
     let inner = nws.into_inner();
@@ -51,14 +56,23 @@ pub fn test() {
     IntoInner,
     NewValidated,
     TryFrom,
-    Error,
 )]
+#[error_type(NotWhitespaceStringError)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[cfg_attr(feature = "serde", serde(into = "String"))]
-// #[validationErrorType(Error)]
-// #[inputvalidationErrorName(StringWhitespaceError)]
 pub struct NotWhitespaceString(String);
+
+/// Error indicating the wrapper struct failed validation.
+#[derive(Debug, thiserror::Error)]
+#[error("Input for NotWhitespaceString failed validation. Input: {0}")]
+pub struct NotWhitespaceStringError(pub String);
+
+impl NotWhitespaceStringError {
+    pub(crate) fn nwserrtest(&self) {
+        println!("{}", self.0);
+    }
+}
 
 impl InputValidator for NotWhitespaceString {
     type Input = String;
@@ -85,10 +99,16 @@ impl InputValidator for NotWhitespaceString {
     TryFrom,
     NewSanitizedValidated,
 )]
+#[error_type(NotWhitespaceStringError)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[cfg_attr(feature = "serde", serde(into = "String"))]
 pub struct TrimmedNotEmptyString(String);
+
+/// Error indicating the wrapper struct failed validation.
+#[derive(Debug, thiserror::Error)]
+#[error("Input for TrimmedEmptyString failed validation. Input: {0}")]
+pub struct TrimmedEmptyStringError(pub String);
 
 impl InputValidator for TrimmedNotEmptyString {
     type Input = String;

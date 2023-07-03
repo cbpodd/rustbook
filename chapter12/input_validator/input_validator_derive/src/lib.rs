@@ -2,6 +2,9 @@
 //!
 //! Derivable macros for the input validator library.
 
+// TODO: Add an error type as an attribute.
+// TODO: Move these implementations into functional macros
+
 use proc_macro::TokenStream;
 
 mod from;

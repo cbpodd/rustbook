@@ -20,6 +20,16 @@ pub fn test() {
 
     let inner = nws.into_inner();
     printer(&inner);
+
+    let ts = TrimmedString::new(String::from(" trim "));
+    printer(&ts);
+
+    let tnes = TrimmedNotEmptyString::try_from(" new string ".to_owned())
+        .expect("Construction should not fail");
+    printer(&tnes);
+
+    let inner = tnes.into_inner();
+    printer(&inner);
 }
 
 /// Not whitespace string

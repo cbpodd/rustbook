@@ -176,8 +176,8 @@ mod unit_tests {
         let test_str = "Not Whitespace String";
         let json_str = format!("{{\"nws\":\"{test_str}\"}}");
 
-        let deserialized_struct: TestStruct =
-            serde_json::from_str(&json_str).expect("Deserialization should not fail");
+        let deserialized_struct: TestStruct = serde_json::from_str(&json_str)
+            .expect("Deserialization should not fail");
 
         assert_eq!(test_str, *deserialized_struct.nws);
     }
@@ -202,8 +202,8 @@ mod unit_tests {
                 .expect("Construction should not fail"),
         };
 
-        let actual_json_str =
-            serde_json::to_string(&test_struct).expect("Serialization should not fail");
+        let actual_json_str = serde_json::to_string(&test_struct)
+            .expect("Serialization should not fail");
 
         assert_eq!(expected_json_str, actual_json_str);
     }

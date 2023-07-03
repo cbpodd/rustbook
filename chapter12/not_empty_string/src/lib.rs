@@ -2,16 +2,19 @@
 
 use derive_more::{AsRef, Deref, Display, From, Into};
 use input_validator::{
-    InputSanitizer, InputValidator, IntoInner, NewSanitized, NewSanitizedValidated, NewValidated,
-    TryFrom,
+    InputSanitizer, InputValidator, IntoInner, NewSanitized,
+    NewSanitizedValidated, NewValidated, TryFrom,
 };
+
+fn test2(test: &str) {
+    println!("{test}");
+}
 
 /// A test function
 pub fn test() {
-    let nws = NotWhitespaceString::new("test".to_owned()).expect("Construction should not fail");
-    let mut inner = nws.into_inner();
-    inner.push_str("test");
-    println!("{inner}");
+    let nws = NotWhitespaceString::new("test".to_owned())
+        .expect("Construction should not fail");
+    test2(&nws);
 }
 
 /// Not whitespace string

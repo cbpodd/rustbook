@@ -12,7 +12,9 @@ pub(crate) enum Error {
     WrongNumberOfArguments(u32),
 
     #[error("Whitespace or empty string input")]
-    WhitespaceOrEmptyInputString(#[from] newtypes::not_whitespace_string::Error),
+    WhitespaceOrEmptyInputString(
+        #[from] newtypes::not_whitespace_string::Error,
+    ),
 
     #[error("Failed to read file.")]
     FailedToReadFile(#[from] io::Error),

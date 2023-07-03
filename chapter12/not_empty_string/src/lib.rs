@@ -1,4 +1,6 @@
-//! Not empty string
+//! # Not empty string
+//!
+//! Some various test newtypes to try out my derivable macros.
 
 use derive_more::{AsRef, Deref, Display, From, Into};
 use input_validator::{
@@ -6,15 +8,18 @@ use input_validator::{
     NewSanitizedValidated, NewValidated, TryFrom,
 };
 
-fn test2(test: &str) {
+fn printer(test: &str) {
     println!("{test}");
 }
 
 /// A test function
 pub fn test() {
-    let nws = NotWhitespaceString::new("test".to_owned())
+    let nws = NotWhitespaceString::try_from("test".to_owned())
         .expect("Construction should not fail");
-    test2(&nws);
+    printer(&nws);
+
+    let inner = nws.into_inner();
+    printer(&inner);
 }
 
 /// Not whitespace string

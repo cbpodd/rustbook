@@ -1,4 +1,6 @@
-// from.rs
+//! #From
+//!
+//! Derivable macros for from-like traits. Assumes use of the new validated pattern.
 
 use proc_macro::TokenStream;
 use quote::quote;

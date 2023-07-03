@@ -1,4 +1,7 @@
-// new.rs
+//! # New
+//!
+//! Derivable implementations of constructor functions for validated and/or
+//! sanitized newtypes.
 
 use proc_macro::TokenStream;
 use quote::quote;

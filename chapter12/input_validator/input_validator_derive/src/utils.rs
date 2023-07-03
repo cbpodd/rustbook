@@ -1,3 +1,5 @@
+//! # Utils
+//!
 //! Utilities for the input validator deriving functions.
 
 use proc_macro::TokenStream;
@@ -20,16 +22,14 @@ fn get_name(ast: &DeriveInput) -> &Ident {
 }
 
 fn get_single_wrapped_field(ast: &DeriveInput) -> &Type {
+    const ERROR_MESSAGE: &str = "Expected a single unnamed field";
     if let syn::Data::Struct(syn::DataStruct {
         fields: syn::Fields::Unnamed(syn::FieldsUnnamed { unnamed, .. }),
         ..
     }) = &ast.data
     {
-        unnamed
-            .first()
-            .map(|f| &f.ty)
-            .expect("Expected a single unnamed field")
+        unnamed.first().map(|f| &f.ty).expect(ERROR_MESSAGE)
     } else {
-        panic!("Expected a single unnamed field")
+        panic!("{ERROR_MESSAGE}")
     }
 }

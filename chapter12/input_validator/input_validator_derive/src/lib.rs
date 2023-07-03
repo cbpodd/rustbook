@@ -1,3 +1,5 @@
+//! # Input Validator Derivations
+//!
 //! Derivable macros for the input validator library.
 
 use proc_macro::TokenStream;

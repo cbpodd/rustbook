@@ -5,8 +5,18 @@ use input_validator::{
     InputSanitizer, InputValidator, IntoInner, NewSanitized, NewSanitizedValidated, NewValidated,
 };
 
+/// A test function
+pub fn test() {
+    let nws = NotWhitespaceString::new("test".to_owned()).expect("Construction should not fail");
+    let mut inner = nws.into_inner();
+    inner.push_str("test");
+    println!("{inner}");
+}
+
 /// Not whitespace string
-#[derive(Clone, Debug, Hash, Display, PartialEq, Eq, PartialOrd, Ord, Into, AsRef, Deref)]
+#[derive(
+    Clone, Debug, Hash, Display, PartialEq, Eq, PartialOrd, Ord, Into, AsRef, Deref, IntoInner,
+)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[cfg_attr(feature = "serde", serde(into = "String"))]
@@ -21,14 +31,6 @@ impl NewValidated for NotWhitespaceString {
         }
 
         Ok(NotWhitespaceString(raw_input))
-    }
-}
-
-impl IntoInner for NotWhitespaceString {
-    type Inner = String;
-
-    fn into_inner(self) -> Self::Inner {
-        self.0
     }
 }
 
@@ -49,7 +51,9 @@ impl TryFrom<String> for NotWhitespaceString {
 }
 
 /// Trimmed not empty string
-#[derive(Clone, Debug, Hash, Display, PartialEq, Eq, PartialOrd, Ord, Into, AsRef, Deref)]
+#[derive(
+    Clone, Debug, Hash, Display, PartialEq, Eq, PartialOrd, Ord, Into, AsRef, Deref, IntoInner,
+)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[cfg_attr(feature = "serde", serde(into = "String"))]
@@ -66,14 +70,6 @@ impl NewSanitizedValidated for TrimmedNotEmptyString {
         }
 
         Ok(TrimmedNotEmptyString(sanitized_input))
-    }
-}
-
-impl IntoInner for TrimmedNotEmptyString {
-    type Inner = String;
-
-    fn into_inner(self) -> Self::Inner {
-        self.0
     }
 }
 

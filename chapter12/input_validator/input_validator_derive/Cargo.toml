@@ -1,0 +1,17 @@
+[package]
+name = "input_validator_derive"
+version = "0.1.0"
+edition = "2021"
+description = "Derivable macros for input validator traits."
+authors = ["Cameron Podd <cbpodd@gmail.com>"]
+keywords = ["newtype", "wrapper", "derive", "macros"]
+readme = "None"
+repository = "https://github.com/cbpodd/rustbook"
+categories = ["learning-tools::example-test-code"]
+
+[lib]
+proc_macro = true
+
+[dependencies]
+syn = "1.0"
+quote = "1.0"

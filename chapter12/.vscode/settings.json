@@ -2,5 +2,10 @@
     "vscode-nmake-tools.workspaceBuildDirectories": [
         "."
     ],
-    "vscode-nmake-tools.attemptExternalExtensionInstall": false
+    "vscode-nmake-tools.attemptExternalExtensionInstall": false,
+    "rust-analyzer.linkedProjects": [
+        "./input_validator_derive/Cargo.toml",
+        "./input_validator/input_validator_derive/Cargo.toml"
+    ],
+    "rust-analyzer.showUnlinkedFileNotification": false
 }

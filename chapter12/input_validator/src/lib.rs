@@ -1,5 +1,8 @@
 //! Input Validator
 
+#[cfg(feature = "derive")]
+pub use input_validator_derive::IntoInner;
+
 /// Trait for a type that newtypes that validate their input.
 pub trait InputValidator {
     /// Input type

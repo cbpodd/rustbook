@@ -15,5 +15,5 @@ pub(crate) enum Error {
     WhitespaceOrEmptyInputString(#[from] newtypes::not_whitespace_string::Error),
 
     #[error("Failed to read file.")]
-    FailedToReadFileError(#[from] io::Error),
+    FailedToReadFile(#[from] io::Error),
 }

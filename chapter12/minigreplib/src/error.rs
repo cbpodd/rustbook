@@ -2,6 +2,10 @@
 //!
 //! Error types for minigrep library.
 
+// Re-export query validation error.
+pub use crate::newtypes::FileContentsValidationError;
+pub use crate::newtypes::QueryValidationError;
+
 /// Error types for the minigrep library.
 #[derive(thiserror::Error, Debug)]
 pub enum Error {

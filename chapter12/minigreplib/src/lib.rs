@@ -3,17 +3,21 @@
 //! A minigrep program. Library for the `minigrep` CLI app.
 
 pub mod error;
+pub mod newtypes;
 
 mod prelude;
 
-use newtypes::not_whitespace_string::NotWhitespaceString;
-
-pub use crate::error::Error;
+use prelude::*;
 
 /// Searches for a pattern in a file's contents.
+///
+/// # Errors
+///
+/// None right now.
 pub fn search_for_pattern(
-    pattern: &NotWhitespaceString,
-    file_contents: &NotWhitespaceString,
-) {
+    pattern: Query,
+    file_contents: FileContents,
+) -> Result<()> {
     println!("Searching for {pattern} in {file_contents}");
+    Ok(())
 }

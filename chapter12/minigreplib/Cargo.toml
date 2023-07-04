@@ -11,5 +11,7 @@ repository = "https://github.com/cbpodd/rustbook"
 categories = ["learning-tools::example-test-code"]
 
 [dependencies]
-newtypes = { path = "../newtypes" }
+derive_more = "0.99"
 thiserror = "1.0"
+
+input_validator = { path = "../input_validator", features = ["derive"] }

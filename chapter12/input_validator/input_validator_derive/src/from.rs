@@ -14,9 +14,11 @@ pub(crate) fn implement_tryfrom(ast: &DeriveInput) -> TokenStream {
         utils::get_attribute_value(&ast.attrs, "error_type");
     let error_type = attribute_error_type.as_ref().unwrap_or(wrapped);
     let generated = quote! {
-        impl TryFrom<#wrapped> for #name {
+        #[automatically_derived]
+        impl ::core::convert::TryFrom<#wrapped> for #name {
             type Error = #error_type;
 
+            #[inline]
             fn try_from(value: #wrapped) -> Result<Self, Self::Error> {
                 #name::new(value)
             }

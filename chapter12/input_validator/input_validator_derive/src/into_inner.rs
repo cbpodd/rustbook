@@ -9,9 +9,11 @@ use crate::utils;
 pub(crate) fn implement(ast: &DeriveInput) -> TokenStream {
     let (name, wrapped) = utils::get_struct_info(ast);
     let generated = quote! {
-        impl IntoInner for #name {
+        #[automatically_derived]
+        impl input_validator::IntoInner for #name {
             type Inner = #wrapped;
 
+            #[inline]
             fn into_inner(self) -> Self::Inner {
                 self.0
             }

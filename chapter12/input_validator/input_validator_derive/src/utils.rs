@@ -1,13 +1,7 @@
-//! # Utils
-//!
-//! Utilities for the input validator deriving functions.
-
 use proc_macro::TokenStream;
 use syn::{Attribute, DeriveInput, Ident, Type};
 
 pub(crate) fn parse_ast(input: TokenStream) -> DeriveInput {
-    // Construct a representation of Rust code as a syntax tree
-    // that we can manipulate
     syn::parse(input).expect("Parsing syntax tree should not fail")
 }
 

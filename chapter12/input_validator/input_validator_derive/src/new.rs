@@ -23,10 +23,12 @@ pub(crate) fn implement_validated(ast: &DeriveInput) -> TokenStream {
         };
 
     let generated = quote! {
-        impl NewValidated for #name {
+        #[automatically_derived]
+        impl input_validator::NewValidated for #name {
             type Inner = #wrapped;
             type Error = #error_type;
 
+            #[inline]
             fn new(raw_input: Self::Inner) -> Result<Self, Self::Error> {
                 if !#name::is_valid_input(&raw_input) {
                     return Err(#error_constructor);
@@ -43,9 +45,11 @@ pub(crate) fn implement_validated(ast: &DeriveInput) -> TokenStream {
 pub(crate) fn implement_sanitized(ast: &DeriveInput) -> TokenStream {
     let (name, wrapped) = utils::get_struct_info(ast);
     let generated = quote! {
-        impl NewSanitized for #name {
+        #[automatically_derived]
+        impl input_validator::NewSanitized for #name {
             type Inner = #wrapped;
 
+            #[inline]
             fn new(raw_input: Self::Inner) -> Self {
                 let sanitized_input = #name::sanitize_input(raw_input);
                 #name(sanitized_input)
@@ -71,10 +75,12 @@ pub(crate) fn implement_sanitized_validated(ast: &DeriveInput) -> TokenStream {
         };
 
     let generated = quote! {
-        impl NewSanitizedValidated for #name {
+        #[automatically_derived]
+        impl input_validator::NewSanitizedValidated for #name {
             type Inner = #wrapped;
             type Error = #error_type;
 
+            #[inline]
             fn new(raw_input: Self::Inner) -> Result<Self, Self::Error> {
                 let sanitized_input = #name::sanitize_input(raw_input);
 

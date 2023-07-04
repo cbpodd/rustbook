@@ -23,9 +23,6 @@ pub fn test() {
         .expect("Construction should not fail");
     printer(&nws);
 
-    let err = NotWhitespaceStringError("test".to_owned());
-    println!("{err}");
-
     let inner = nws.into_inner();
     printer(&inner);
 
@@ -35,6 +32,10 @@ pub fn test() {
     let tnes = TrimmedNotEmptyString::try_from(" new string ".to_owned())
         .expect("Construction should not fail");
     printer(&tnes);
+
+    let tneserr = TrimmedNotEmptyString::try_from("  ".to_owned())
+        .expect_err("Construction should fail");
+    println!("{tneserr}");
 
     let inner = tnes.into_inner();
     printer(&inner);
@@ -69,7 +70,7 @@ pub struct NotWhitespaceString(String);
 /// Error indicating the wrapper struct failed validation.
 #[derive(Debug, thiserror::Error)]
 #[error("Input for NotWhitespaceString failed validation. Input: {0}")]
-pub struct NotWhitespaceStringError(pub String);
+pub struct NotWhitespaceStringError(String);
 
 impl NotWhitespaceStringError {
     pub(crate) fn nwserrtest(&self) {
@@ -102,7 +103,7 @@ impl InputValidator for NotWhitespaceString {
     TryFrom,
     NewSanitizedValidated,
 )]
-#[error_type(NotWhitespaceStringError)]
+#[error_type(Error)]
 #[cfg_attr(feature = "serde", derive(Deserialize, Serialize))]
 #[cfg_attr(feature = "serde", serde(try_from = "String"))]
 #[cfg_attr(feature = "serde", serde(into = "String"))]
@@ -111,7 +112,7 @@ pub struct TrimmedNotEmptyString(String);
 /// Error indicating the wrapper struct failed validation.
 #[derive(Debug, thiserror::Error)]
 #[error("Input for TrimmedEmptyString failed validation. Input: {0}")]
-pub struct TrimmedEmptyStringError(pub String);
+pub struct Error(String);
 
 impl InputValidator for TrimmedNotEmptyString {
     type Input = String;

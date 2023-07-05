@@ -13,6 +13,5 @@ categories = ["learning-tools::example-test-code"]
 [dependencies]
 derive_more = "0.99"
 thiserror = "1.0"
-derive_builder = "0.9"
 
 input_validator = { path = "../input_validator", features = ["derive"] }

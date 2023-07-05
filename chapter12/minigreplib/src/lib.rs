@@ -7,7 +7,6 @@ pub mod newtypes;
 
 mod prelude;
 
-use derive_builder::Builder;
 use prelude::*;
 
 /// Searches for a pattern in a file's contents.
@@ -25,11 +24,21 @@ pub fn run(config: Config) -> Result<()> {
 }
 
 /// Configuration for this library.
-#[derive(Builder, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct Config {
     /// Query to search.
     pattern: Query,
 
     /// File contents to search in.
     file_contents: FileContents,
+}
+
+impl Config {
+    /// Create a new configuration object.
+    pub fn new(pattern: Query, file_contents: FileContents) -> Self {
+        Self {
+            pattern,
+            file_contents,
+        }
+    }
 }

@@ -11,18 +11,14 @@ use std::{env, fs, path::Path};
 use crate::prelude::*;
 use minigreplib::{
     newtypes::{FileContents, Query},
-    ConfigBuilder,
+    Config,
 };
 
 fn main() -> Result<()> {
     let (query, path_string) = parse_args()?;
     let file_path = Path::new(&path_string);
     let contents = read_file_contents(file_path)?;
-    let config = ConfigBuilder::default()
-        .pattern(query)
-        .file_contents(contents)
-        .build()
-        .expect("Creating config should not fail");
+    let config = Config::new(query, contents);
 
     minigreplib::run(config)?;
     Ok(())

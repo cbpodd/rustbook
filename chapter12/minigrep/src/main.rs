@@ -12,11 +12,7 @@ use crate::prelude::*;
 use minigreplib::{newtypes::Query, Config};
 
 fn main() -> Result<()> {
-    let (query, path_string) = parse_args()?;
-    let contents = fs::read_to_string(Path::new(&path_string))?.try_into()?;
-    let config = Config::new(query, contents);
-
-    minigreplib::run(config)?;
+    minigreplib::run(generate_config()?)?;
     Ok(())
 }
 
@@ -36,4 +32,10 @@ fn parse_args() -> Result<(Query, String)> {
     };
 
     Ok((query, path_str))
+}
+
+fn generate_config() -> Result<Config> {
+    let (query, path_string) = parse_args()?;
+    let contents = fs::read_to_string(Path::new(&path_string))?.try_into()?;
+    Ok(Config::new(query, contents))
 }

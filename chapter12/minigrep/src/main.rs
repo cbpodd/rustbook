@@ -9,15 +9,11 @@ mod prelude;
 use std::{env, fs, path::Path};
 
 use crate::prelude::*;
-use minigreplib::{
-    newtypes::{FileContents, Query},
-    Config,
-};
+use minigreplib::{newtypes::Query, Config};
 
 fn main() -> Result<()> {
     let (query, path_string) = parse_args()?;
-    let file_path = Path::new(&path_string);
-    let contents = read_file_contents(file_path)?;
+    let contents = fs::read_to_string(Path::new(&path_string))?.try_into()?;
     let config = Config::new(query, contents);
 
     minigreplib::run(config)?;
@@ -40,9 +36,4 @@ fn parse_args() -> Result<(Query, String)> {
     };
 
     Ok((query, path_str))
-}
-
-fn read_file_contents(path: &Path) -> Result<FileContents> {
-    let contents_string = fs::read_to_string(path)?;
-    Ok(FileContents::try_from(contents_string)?)
 }

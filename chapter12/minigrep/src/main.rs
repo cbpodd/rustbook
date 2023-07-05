@@ -9,14 +9,22 @@ mod prelude;
 use std::{env, fs, path::Path};
 
 use crate::prelude::*;
-use minigreplib::newtypes::{FileContents, Query};
+use minigreplib::{
+    newtypes::{FileContents, Query},
+    ConfigBuilder,
+};
 
 fn main() -> Result<()> {
     let (query, path_string) = parse_args()?;
     let file_path = Path::new(&path_string);
     let contents = read_file_contents(file_path)?;
+    let config = ConfigBuilder::default()
+        .pattern(query)
+        .file_contents(contents)
+        .build()
+        .expect("Creating config should not fail");
 
-    minigreplib::search_for_pattern(query, contents)?;
+    minigreplib::run(config)?;
     Ok(())
 }
 
@@ -28,9 +36,7 @@ fn parse_args() -> Result<(Query, String)> {
             .expect("Program arguments should always contain program name"),
     );
 
-    let query_str = args.next().ok_or(Error::NoArguments)?;
-    let query = Query::try_from(query_str)?;
-
+    let query: Query = args.next().ok_or(Error::NoArguments)?.try_into()?;
     let path_str = args.next().ok_or(Error::WrongNumberOfArguments(1))?;
 
     if Option::is_some(&args.next()) {

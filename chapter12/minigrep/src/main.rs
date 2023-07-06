@@ -6,13 +6,22 @@ mod error;
 
 mod prelude;
 
-use std::{env, fs, path::Path};
+use std::{env, path::Path};
 
 use crate::prelude::*;
-use minigreplib::{newtypes::Query, Config};
+use minigreplib::{newtypes::Query, SearchConfig};
 
 fn main() -> Result<()> {
-    minigreplib::run(generate_config()?)?;
+    let (query, path_str) = parse_args()?;
+
+    let path = Path::new(&path_str);
+    let contents = minigreplib::read_file(path)?;
+
+    let config = SearchConfig::new(query, contents);
+    let results = minigreplib::search(config)?;
+    for result in results {
+        println!("Result: {result}");
+    }
     Ok(())
 }
 
@@ -32,10 +41,4 @@ fn parse_args() -> Result<(Query, String)> {
     };
 
     Ok((query, path_str))
-}
-
-fn generate_config() -> Result<Config> {
-    let (query, path_string) = parse_args()?;
-    let contents = fs::read_to_string(Path::new(&path_string))?.try_into()?;
-    Ok(Config::new(query, contents))
 }

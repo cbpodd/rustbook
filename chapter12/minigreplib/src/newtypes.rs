@@ -5,7 +5,7 @@
 use derive_more::{Deref, Display, Into};
 use input_validator::{
     InputSanitizer, InputValidator, IntoInner, NewSanitizedValidated,
-    NewValidated, TryFrom,
+    NewValidated, TryFrom, TryFromStr,
 };
 
 /// Minigrep query. Must be a non-empty or whitespace string.
@@ -18,6 +18,7 @@ use input_validator::{
     IntoInner,
     NewSanitizedValidated,
     TryFrom,
+    TryFromStr,
 )]
 #[error_type(QueryValidationError)]
 pub struct Query(String);
@@ -45,7 +46,15 @@ pub struct QueryValidationError(String);
 
 /// File contents. Must be a non-empty or whitespace string.
 #[derive(
-    Debug, Display, Clone, Into, Deref, IntoInner, NewValidated, TryFrom,
+    Debug,
+    Display,
+    Clone,
+    Into,
+    Deref,
+    IntoInner,
+    NewValidated,
+    TryFrom,
+    TryFromStr,
 )]
 #[error_type(FileContentsValidationError)]
 pub struct FileContents(String);

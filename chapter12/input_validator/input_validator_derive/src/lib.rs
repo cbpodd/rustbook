@@ -40,9 +40,17 @@ pub fn new_sanitized_validated_derive(input: TokenStream) -> TokenStream {
     new::implement_sanitized_validated(&ast)
 }
 
-/// Derive the `NewValidated`trait on the specified wrapper struct.
+/// Derive the `TryFrom`trait on the specified newtype struct.
 #[proc_macro_derive(TryFrom, attributes(error_type))]
 pub fn new_validated_tryfrom(input: TokenStream) -> TokenStream {
     let ast = utils::parse_ast(input);
     from::implement_tryfrom(&ast)
+}
+
+/// This macro implements `TryFrom<&str>` on a newtype struct that
+/// already has `TryFrom<String>` implemented.
+#[proc_macro_derive(TryFromStr, attributes(error_type))]
+pub fn new_validated_tryfromstr(input: TokenStream) -> TokenStream {
+    let ast = utils::parse_ast(input);
+    from::implement_tryfromstr(&ast)
 }

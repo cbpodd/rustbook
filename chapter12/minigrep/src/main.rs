@@ -9,7 +9,7 @@ mod prelude;
 use std::{env, path::Path};
 
 use crate::prelude::*;
-use minigreplib::{newtypes::Query, SearchConfig};
+use minigreplib::newtypes::Query;
 
 fn main() -> Result<()> {
     let (query, path_str) = parse_args()?;
@@ -17,8 +17,7 @@ fn main() -> Result<()> {
     let path = Path::new(&path_str);
     let contents = minigreplib::read_file(path)?;
 
-    let config = SearchConfig::new(query, contents);
-    let results = minigreplib::search(config)?;
+    let results = minigreplib::search(query, contents);
     for result in results {
         println!("Result: {result}");
     }

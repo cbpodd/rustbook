@@ -8,6 +8,9 @@ use input_validator::{
     NewSanitizedValidated, NewValidated, TryFrom,
 };
 
+#[cfg(feature = "serde")]
+use serde::{Deserialize, Serialize};
+
 fn printer(test: &str) {
     println!("{test}");
 }

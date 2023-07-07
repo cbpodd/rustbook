@@ -26,33 +26,14 @@ pub fn read_file(path: &Path) -> Result<FileContents> {
 /// # Errors
 ///
 /// None right now.
-pub fn search(config: SearchConfig) -> Result<Vec<String>> {
-    println!(
-        "Searching for {} in {}",
-        config.pattern, config.file_contents
-    );
+pub fn search(query: Query, contents: FileContents) -> Vec<String> {
+    let pattern_str: &str = &query;
 
-    Ok(Vec::new())
-}
-
-/// Configuration for this library.
-#[derive(Debug, Clone)]
-pub struct SearchConfig {
-    /// Query to search.
-    pattern: Query,
-
-    /// File contents to search in.
-    file_contents: FileContents,
-}
-
-impl SearchConfig {
-    /// Create a new configuration object.
-    pub fn new(pattern: Query, file_contents: FileContents) -> Self {
-        Self {
-            pattern,
-            file_contents,
-        }
-    }
+    contents
+        .lines()
+        .filter(|line| line.contains(pattern_str))
+        .map(std::borrow::ToOwned::to_owned)
+        .collect()
 }
 
 #[cfg(test)]
@@ -61,23 +42,20 @@ mod tests {
 
     #[test]
     fn one_result() {
+        const QUERY_STR: &str = "duct";
         const CONTENTS_STR: &str = "\
-        Rust:
-        safe, fast, productive.
-        Pick three.";
+Rust:
+safe, fast, productive.
+Pick three.";
 
-        let query: Query = create_newtype("duct");
-        let contents: FileContents = create_newtype(CONTENTS_STR);
-    }
-
-    fn create_newtype<T>(input: &str) -> T
-    where
-        T: TryFrom<String>,
-        T::Error: std::fmt::Debug,
-    {
-        input
-            .to_owned()
+        let query: Query =
+            QUERY_STR.try_into().expect("Construction should not fail");
+        let contents: FileContents = CONTENTS_STR
             .try_into()
-            .expect("Construction should not fail")
+            .expect("Construciton should not fail");
+
+        let search_result = search(query, contents);
+
+        assert_eq!(vec!["safe, fast, productive"], search_result);
     }
 }

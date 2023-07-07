@@ -56,6 +56,6 @@ Pick three.";
 
         let search_result = search(query, contents);
 
-        assert_eq!(vec!["safe, fast, productive"], search_result);
+        assert_eq!(vec!["safe, fast, productive."], search_result);
     }
 }

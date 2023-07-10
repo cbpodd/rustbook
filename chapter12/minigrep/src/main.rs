@@ -6,20 +6,30 @@ mod error;
 
 mod prelude;
 
-use std::{env, path::Path};
+use std::{env, path::Path, process::ExitCode};
 
 use crate::prelude::*;
-use minigreplib::newtypes::Query;
+use minigreplib::{newtypes::Query, Case};
 
-fn main() -> Result<()> {
+fn main() -> ExitCode {
+    let err = match run() {
+        Ok(_) => return ExitCode::SUCCESS,
+        Err(err) => err,
+    };
+
+    handle_err(err)
+}
+
+fn run() -> Result<()> {
     let (query, path_str) = parse_args()?;
 
     let path = Path::new(&path_str);
     let contents = minigreplib::read_file(path)?;
+    let case = get_case();
 
-    let results = minigreplib::search(query, contents);
+    let results = minigreplib::search(query, contents, case);
     for result in results {
-        println!("Result: {result}");
+        println!("{result}");
     }
     Ok(())
 }
@@ -40,4 +50,16 @@ fn parse_args() -> Result<(Query, String)> {
     };
 
     Ok((query, path_str))
+}
+
+fn get_case() -> Case {
+    match env::var("IGNORE_CASE") {
+        Ok(_) => Case::Insensitive,
+        Err(_) => Case::Sensitive,
+    }
+}
+
+fn handle_err(err: Error) -> ExitCode {
+    eprintln!("{err}");
+    ExitCode::FAILURE
 }

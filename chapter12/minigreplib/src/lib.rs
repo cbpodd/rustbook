@@ -103,7 +103,7 @@ Trust me.";
             QUERY_STR.try_into().expect("Construction should not fail");
         let contents: FileContents = CONTENTS_STR
             .try_into()
-            .expect("Construciton should not fail");
+            .expect("Construction should not fail");
 
         let search_result = search(query, contents, Case::Insensitive);
 

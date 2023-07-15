@@ -1,0 +1,19 @@
+[package]
+name = "input_validator"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "An input validator."
+authors = ["Cameron Podd <cbpodd@gmail.com>"]
+keywords = ["newtype", "wrapper", "string"]
+readme = "None"
+repository = "https://github.com/cbpodd/rustbook"
+categories = ["learning-tools::example-test-code"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+input_validator_derive = { path = "input_validator_derive", optional = true }
+
+[features]
+derive = ["dep:input_validator_derive"]

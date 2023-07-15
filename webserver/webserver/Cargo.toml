@@ -1,0 +1,13 @@
+[package]
+name = "webserver"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "A web server."
+authors = ["Cameron Podd <cbpodd@gmail.com>"]
+keywords = ["webserver", "systems"]
+readme = "None"
+repository = "https://github.com/cbpodd/rustbook"
+categories = ["learning-tools::example-test-code"]
+
+[dependencies]

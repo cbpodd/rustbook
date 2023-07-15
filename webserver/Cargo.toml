@@ -1,0 +1,8 @@
+[workspace]
+
+members = [
+    "input_validator",
+    "input_validator/input_validator_derive",
+    "webserver",
+    "tests_common"
+]

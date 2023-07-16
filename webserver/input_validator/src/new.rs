@@ -14,15 +14,12 @@ where
     /// Inner type the newtype is wrapping.
     type Inner;
 
-    /// Error type returned when construction fails.
-    type Error;
-
     /// Create a new self.
     ///
     /// # Errors
     ///
     /// Returns the failing input if the input does not pass validation.
-    fn new(raw_input: Self::Inner) -> Result<Self, Self::Error>;
+    fn new(raw_input: Self::Inner) -> Option<Self>;
 }
 
 /// Trait for a newtype which can be created from sanitizing its input.
@@ -45,13 +42,10 @@ where
     /// Inner type.
     type Inner;
 
-    /// Error type returned when construction fails.
-    type Error;
-
     /// Create a new item by sanitizing and validating the input.
     ///
     /// # Errors
     ///
     /// Returns the failing input if the input does not pass validation.
-    fn new(raw_input: Self::Inner) -> Result<Self, Self::Error>;
+    fn new(raw_input: Self::Inner) -> Option<Self>;
 }

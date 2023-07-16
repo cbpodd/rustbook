@@ -10,17 +10,14 @@ use crate::utils;
 
 pub(crate) fn implement_tryfrom(ast: &DeriveInput) -> TokenStream {
     let (name, wrapped) = utils::get_struct_info(ast);
-    let attribute_error_type =
-        utils::get_attribute_value(&ast.attrs, "error_type");
-    let error_type = attribute_error_type.as_ref().unwrap_or(wrapped);
     let generated = quote! {
         #[automatically_derived]
         impl ::core::convert::TryFrom<#wrapped> for #name {
-            type Error = #error_type;
+            type Error = input_validator::error::ValidationFailedError;
 
             #[inline]
             fn try_from(value: #wrapped) -> Result<Self, Self::Error> {
-                #name::new(value)
+                #name::new(value).ok_or(input_validator::error::ValidationFailedError)
             }
         }
     };
@@ -29,14 +26,11 @@ pub(crate) fn implement_tryfrom(ast: &DeriveInput) -> TokenStream {
 }
 
 pub(crate) fn implement_tryfromstr(ast: &DeriveInput) -> TokenStream {
-    let (name, wrapped) = utils::get_struct_info(ast);
-    let attribute_error_type =
-        utils::get_attribute_value(&ast.attrs, "error_type");
-    let error_type = attribute_error_type.as_ref().unwrap_or(wrapped);
+    let (name, _) = utils::get_struct_info(ast);
     let generated = quote! {
         #[automatically_derived]
         impl ::core::convert::TryFrom<&str> for #name {
-            type Error = #error_type;
+            type Error = input_validator::error::ValidationFailedError;
 
             #[inline]
             fn try_from(value: &str) -> Result<Self, Self::Error> {

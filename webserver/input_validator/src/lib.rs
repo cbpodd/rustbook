@@ -9,6 +9,8 @@ pub use input::*;
 pub use into_inner::*;
 pub use new::*;
 
+pub mod error;
+
 mod input;
 mod into_inner;
 mod new;

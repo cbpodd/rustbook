@@ -13,6 +13,8 @@ categories = ["learning-tools::example-test-code"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+thiserror = "1.0"
+
 input_validator_derive = { path = "input_validator_derive", optional = true }
 
 [features]

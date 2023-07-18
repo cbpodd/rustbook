@@ -15,7 +15,7 @@ use webserver::ThreadPool;
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:7878")
         .expect("Not handling failures for now");
-    let pool = ThreadPool::new(4);
+    let pool = ThreadPool::new(4.try_into().expect("4 is greater than 0"));
 
     for stream in listener.incoming() {
         let stream = stream.expect("Not handling failures for now");

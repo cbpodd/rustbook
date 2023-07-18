@@ -17,7 +17,7 @@ type JobQueueReceiver = Arc<Mutex<Receiver<Job>>>;
 #[derive(Debug)]
 pub struct ThreadPool {
     threads: Vec<Worker>,
-    sender: JobQueueSender,
+    sender: Option<JobQueueSender>,
 }
 
 impl ThreadPool {
@@ -32,44 +32,69 @@ impl ThreadPool {
             threads.push(Worker::new(i, Arc::clone(&receiver)));
         }
 
-        ThreadPool { threads, sender }
+        ThreadPool {
+            threads,
+            sender: Some(sender),
+        }
     }
 
     /// Execute a function on the threadpool
-    #[allow(unused_results)] // Thread will be spawned and never returned.
     pub fn execute<F>(&self, f: F)
     where
         F: FnOnce() + Send + 'static,
     {
         let job = Box::new(f);
-        self.sender.send(job).expect("Not handling errors.");
+        self.sender
+            .as_ref()
+            .expect("Not handling errors")
+            .send(job)
+            .expect("Not handling errors.");
+    }
+}
+
+impl Drop for ThreadPool {
+    fn drop(&mut self) {
+        drop(self.sender.take());
+
+        for worker in &mut self.threads {
+            println!("Shutting down worker {}", worker.id);
+
+            if let Some(handle) = worker.handle.take() {
+                handle.join().expect("Not handling errors");
+            }
+        }
     }
 }
 
 #[derive(Debug)]
 struct Worker {
     id: usize,
-    handle: JoinHandle<()>,
+    handle: Option<JoinHandle<()>>,
 }
 
 impl Worker {
     fn new(id: usize, receiver: JobQueueReceiver) -> Self {
-        let handle = thread::spawn(move || loop {
-            let job = receiver
+        let handle = thread::spawn(move || 'receive_jobs: loop {
+            let Ok(job) = receiver
                 .lock()
                 .expect("Lock is poisoned. Panicking.")
                 .recv()
-                .expect("Not handling errors");
+            else {
+                println!("Sender was dropped. Worker {id} is exiting gracefully.");
+                break 'receive_jobs;
+            };
 
             // The lock is actually dropped here because any temporary values
             // (which the MutexGuard was) are dropped at the end of the let
             // statement.
 
             println!("Worker {id} got a job - executing.");
-
             job();
         });
 
-        Worker { id, handle }
+        Worker {
+            id,
+            handle: Some(handle),
+        }
     }
 }

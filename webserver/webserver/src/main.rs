@@ -17,7 +17,7 @@ fn main() {
         .expect("Not handling failures for now");
     let pool = ThreadPool::new(4.try_into().expect("4 is greater than 0"));
 
-    for stream in listener.incoming() {
+    for stream in listener.incoming().take(2) {
         let stream = stream.expect("Not handling failures for now");
         pool.execute(|| handle_connection(stream));
     }
